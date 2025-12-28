@@ -1,0 +1,325 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>热闹的乐园 - 在线朗读作业</title>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  
+  <style>
+    :root{
+      --bg:#fff8ff;
+      --card:#fff;
+      --accent:#ff9fc4;
+      --accent2:#ffd6a5;
+      --text:#333;
+      --muted:#7a6b7a;
+      --shadow: 0 8px 24px rgba(122,107,122,0.12);
+    }
+    html,body{height:100%;margin:0;font-family:"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",sans-serif;background:url('https:https://m.gettywallpapers.com/wp-content/uploads/2023/12/Cute-Desktop-Wallpaper.jpg') center/cover no-repeat fixed;color:var(--text)}
+    .wrap{min-height:100%;display:flex;align-items:center;justify-content:center;padding:20px;}
+    
+    /* 核心卡片样式 */
+    .card{width:900px;max-width:95%;background:var(--card);border-radius:24px;padding:36px;box-shadow:var(--shadow);display:flex;gap:30px;align-items:flex-start; transition: all 0.3s ease;}
+    
+    /* 登录和成功页面的特殊样式 */
+    .card.center-layout { flex-direction: column; align-items: center; text-align: center; max-width: 600px;}
+
+    .left{flex:1; width: 100%;}
+    .cute-head{display:flex;align-items:center;gap:18px; margin-bottom: 20px;}
+    .center-layout .cute-head { flex-direction: column; gap: 10px; text-align: center;}
+
+    .avatar{width:78px;height:78px;border-radius:18px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;font-size:34px;box-shadow:0 6px 18px rgba(255,159,196,0.25); flex-shrink: 0;}
+    h1{margin:0;font-size:24px; color: #4a3b4a;}
+    p.subtitle{margin:6px 0 0;color:var(--muted); font-size: 15px;}
+
+    .sentence-box{background:linear-gradient(180deg,#ffffff,#fffaf6);border-radius:20px;padding:30px 20px;display:flex;align-items:center;justify-content:center;min-height:200px; border: 2px solid #fff0f5;}
+    
+    /* 字体保持大号 */
+    .sentence{font-size:40px;line-height:1.5;text-align:center;letter-spacing:2px; color: #444; font-weight: bold;}
+    .sentence .ch{transition: color 150ms ease, transform 150ms ease; display: inline-block;}
+    
+    .controls{display:flex;gap:15px;align-items:center;justify-content:center;margin-top:24px; flex-wrap: wrap;}
+    button{padding:12px 24px;border-radius:50px;border:none;cursor:pointer;font-weight:700;box-shadow:0 6px 18px rgba(0,0,0,0.06); font-size: 16px; transition: transform 0.2s;}
+    button:active { transform: scale(0.98); }
+    .btn-primary{background:linear-gradient(90deg,var(--accent),#ffd6a5);color:#7a2e4a;}
+    .btn-ghost{background:transparent;border:2px solid #ffd6a5;color:var(--accent);}
+    .btn-small-ghost{ padding: 8px 16px; font-size: 13px; background: #fff; border: 1px solid #eee; color: var(--muted);}
+
+    .side{width:260px; flex-shrink: 0;}
+    .meta{background:#fff9fc;border-radius:16px;padding:20px;box-shadow:0 4px 12px rgba(122,107,122,0.05); border: 1px solid #ffe4ed;}
+    .meta-item { margin-bottom: 12px; }
+    .meta-label { display: block; font-size: 12px; color: var(--accent); font-weight: bold; margin-bottom: 4px;}
+    .meta-value { font-size: 16px; color: var(--text); font-weight: bold;}
+
+    .footer{margin-top:20px;color:var(--muted);font-size:13px;text-align:center;}
+
+    .view-section { display: none; animation: fadeIn 0.4s ease; }
+    .view-section.active { display: flex; }
+    @keyframes fadeIn { from { opacity:0; transform: translateY(15px); } to { opacity:1; transform: translateY(0); } }
+
+    .form-group { margin-bottom: 20px; text-align: left; width: 100%; max-width: 320px; }
+    select { width: 100%; padding: 12px; border: 2px solid #ffe4ed; border-radius: 12px; font-size: 16px; outline: none; background: #fff;}
+    .google-btn-wrapper { width: 100%; display: flex; justify-content: center; margin: 20px 0; min-height: 50px;}
+    .user-card { display: none; background: #f0fff4; border: 1px solid #c6f6d5; padding: 8px 16px; border-radius: 50px; align-items: center; gap: 10px; margin-bottom: 20px; }
+    .user-card img { width: 28px; height: 28px; border-radius: 50%; }
+    .user-card span { font-weight: bold; color: #276749; font-size: 14px; }
+    .btn-large { width: 100%; max-width: 320px; font-size: 18px; padding: 14px;}
+    .btn-large:disabled { opacity: 0.5; cursor: not-allowed; background: #eee; box-shadow:none; color:#aaa; }
+
+    @media (max-width:768px){
+      .card{flex-direction:column;padding:24px; align-items: center;}
+      .side{width:100%; order: 2;} 
+      .left { order: 1; }
+      .sentence{font-size:32px;} 
+      .cute-head { justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    
+    <div id="loginView" class="card center-layout view-section active">
+      <div class="cute-head">
+        <div class="avatar">📖</div>
+        <div>
+            <h1>热闹的乐园 - 课文朗读</h1>
+            <p class="subtitle">请选择班级并登录 Google 账号</p>
+        </div>
+      </div>
+
+      <div class="form-group" style="margin-top: 20px;">
+        <label style="font-weight:bold;color:var(--muted);display:block;margin-bottom:8px;">选择班级 (Class)</label>
+        <select id="classSelect">
+          <option value="" disabled selected>请点击选择...</option>
+          <option value="2M">2M</option>
+          <option value="2K">2K</option>
+          <option value="2B">2B</option>
+          <option value="2H">2H</option>
+          <option value="2J">2J</option>
+          <option value="2U">2U</option>
+        </select>
+      </div>
+
+      <div id="userInfo" class="user-card">
+        <img id="userImg" src="" alt="">
+        <span id="userNameDisplay"></span>
+      </div>
+
+      <div class="google-btn-wrapper" id="googleBtnContainer">
+        <div id="g_id_onload"
+             data-client_id="1006856013626-uk3eq5tchv9t65gqosb0k6rst7hi1eeb.apps.googleusercontent.com" 
+             data-callback="handleCredentialResponse"
+             data-auto_prompt="false">
+        </div>
+        <div class="g_id_signin" data-type="standard" data-size="large" data-theme="outline" data-text="sign_in_with" data-shape="rectangular" data-logo_alignment="left"></div>
+      </div>
+
+      <button id="startAppBtn" class="btn-primary btn-large" disabled>请先登录</button>
+      
+      <div class="footer">© 华文课室</div>
+    </div>
+
+    <div id="readingView" class="card view-section">
+      <div class="left">
+          <div class="cute-head">
+            <div class="avatar" style="font-size:30px;">🔊</div>
+            <div>
+                <h1>正在朗读</h1>
+                <p class="subtitle">跟着声音大声读出来哦！</p>
+            </div>
+          </div>
+
+          <div class="sentence-box">
+              <div class="sentence" id="sentenceText">加载中...</div>
+          </div>
+          
+          <div class="controls">
+            <button id="prevBtn" class="btn-ghost">⬅ 上一句</button>
+            <button id="playBtn" class="btn-primary" style="padding: 12px 30px; font-size: 18px;">播放 ▶</button>
+            <button id="nextBtn" class="btn-ghost">下一句 ➡</button>
+          </div>
+          <div class="controls" style="margin-top: 10px;">
+             <button id="autoBtn" class="btn-small-ghost">自动播放：关</button>
+          </div>
+      </div>
+      
+      <div class="side">
+          <div class="meta">
+              <div class="meta-item">
+                  <span class="meta-label">班级 Class</span>
+                  <span class="meta-value" id="metaClass">-</span>
+              </div>
+              <div class="meta-item">
+                  <span class="meta-label">姓名 Name</span>
+                  <span class="meta-value" id="metaName" style="font-size: 14px;">请先登录</span>
+              </div>
+              <div class="meta-item" style="margin-top: 20px;">
+                  <span class="meta-label">当前进度 Progress</span>
+                  <span class="meta-value" style="color:var(--accent); font-size: 20px;" id="footerInfo">0 / 7</span>
+              </div>
+          </div>
+      </div>
+    </div>
+
+    <div id="successView" class="card center-layout view-section">
+      <div style="font-size:70px;margin-bottom:10px">🎉</div>
+      <div class="cute-head">
+        <div>
+            <h1>恭喜你！</h1>
+            <p class="subtitle">你已经完成了今天的朗读功课。</p>
+        </div>
+      </div>
+      
+      <div style="background:#f0fff4;color:#2e7d32;padding:15px;border-radius:12px;margin:20px auto;font-size:14px; display:inline-block; border: 1px solid #c6f6d5;">
+        ✅ 账号与成绩已提交到后台
+      </div>
+      <br>
+      <button onclick="location.reload()" class="btn-primary btn-large">再读一次</button>
+    </div>
+
+  </div>
+
+  <script>
+    // ⚠️ 替换这里为你新发布的 Web App URL
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbw6o6yXHPbtzdQS9irDXHyCPfb3b6NjCKEQPB-chHIoUXp1wdrPtnq1uW1W1V1x2eNlVQ/exec";
+    
+    // ✅ 课文已更新为“热闹的乐园”
+    const sentences = [
+      "课间休息时，校园像一座乐园。",
+      "活泼的同学向操场奔去。",
+      "大家开心地游戏，蹦蹦跳跳，放声大笑，多么快活！",
+      "大树下，同学叽叽喳喳地说个不停。",
+      "他们牵着手，说悄悄话，说笑话，不时笑成一团，多么快乐！",
+      "嘻嘻哈哈的笑声，像一波又一波的海浪，拍打着校园的各个角落。",
+      "啊！这是一座热闹的乐园。"
+    ];
+    
+    let currentClass = "";
+    let googleUser = null; 
+    let index = 0;
+    let auto = false;
+    let autoTimer = null;
+
+    // Google 登录回调
+    function handleCredentialResponse(response) {
+      const responsePayload = decodeJwtResponse(response.credential);
+      console.log("ID: " + responsePayload.sub);
+      
+      googleUser = {
+        name: responsePayload.name,
+        email: responsePayload.email,
+        picture: responsePayload.picture
+      };
+
+      document.getElementById('googleBtnContainer').style.display = 'none';
+      const userCard = document.getElementById('userInfo');
+      userCard.style.display = 'inline-flex';
+      document.getElementById('userImg').src = googleUser.picture;
+      document.getElementById('userNameDisplay').textContent = googleUser.name;
+
+      checkStartEnable();
+    }
+
+    // JWT 解码
+    function decodeJwtResponse(token) {
+      var base64Url = token.split('.')[1];
+      var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
+          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+      }).join(''));
+      return JSON.parse(jsonPayload);
+    }
+
+    function checkStartEnable() {
+      const btn = document.getElementById('startAppBtn');
+      if(document.getElementById('classSelect').value && googleUser) {
+        btn.disabled = false;
+        btn.textContent = "开始做功课 🚀";
+      }
+    }
+
+    document.getElementById('classSelect').addEventListener('change', (e) => {
+      currentClass = e.target.value;
+      checkStartEnable();
+    });
+
+    document.getElementById('startAppBtn').addEventListener('click', () => {
+      document.getElementById('loginView').classList.remove('active');
+      const rv = document.getElementById('readingView');
+      rv.classList.add('active');
+      
+      // 更新侧边栏信息
+      document.getElementById('metaClass').textContent = currentClass;
+      document.getElementById('metaName').textContent = googleUser.name;
+
+      loadSentence(0);
+    });
+
+    // 朗读逻辑
+    const sentenceText = document.getElementById('sentenceText');
+    function loadSentence(i) {
+      if(i >= sentences.length) { finishHomework(); return; }
+      if(i < 0) return; // 防止越界
+      index = i;
+      sentenceText.innerHTML = sentences[index].split('').map((ch,idx)=>`<span class="ch" data-i="${idx}">${ch}</span>`).join('');
+      document.getElementById('footerInfo').textContent = `${index+1} / ${sentences.length}`;
+    }
+
+    function playCurrent() {
+      window.speechSynthesis.cancel();
+      document.querySelectorAll('.ch').forEach(el=>el.style.color='');
+      
+      const msg = new SpeechSynthesisUtterance(sentences[index]);
+      msg.lang = 'zh-CN'; 
+      msg.rate = 0.85; 
+      
+      msg.onboundary = (e) => { 
+        if(e.name==='word'||typeof e.charIndex==='number') highlight(e.charIndex); 
+      };
+      
+      msg.onend = () => { 
+        if(auto) autoTimer = setTimeout(()=>loadSentence(index+1)||playCurrent(), 2000); 
+      };
+      
+      window.speechSynthesis.speak(msg);
+    }
+    
+    function highlight(i) {
+      document.querySelectorAll('.ch').forEach(el=>el.style.color='');
+      const span = document.querySelector(`.ch[data-i="${i}"]`);
+      if(span) span.style.color='#ff4fa3';
+    }
+
+    // 提交数据
+    function finishHomework() {
+      auto = false; clearTimeout(autoTimer); window.speechSynthesis.cancel();
+      
+      const formData = new URLSearchParams();
+      formData.append('name', googleUser.name);
+      formData.append('email', googleUser.email);
+      formData.append('class', currentClass);
+      formData.append('score', "完成");
+      formData.append('total', sentences.length);
+
+      fetch(GAS_URL, {
+        method: 'POST', mode: 'no-cors',
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: formData
+      });
+
+      document.getElementById('readingView').classList.remove('active');
+      const sv = document.getElementById('successView');
+      sv.classList.add('active');
+    }
+
+    document.getElementById('playBtn').onclick = playCurrent;
+    document.getElementById('nextBtn').onclick = ()=>{ window.speechSynthesis.cancel(); loadSentence(index+1); };
+    document.getElementById('prevBtn').onclick = ()=>{ window.speechSynthesis.cancel(); loadSentence(index-1); };
+    document.getElementById('autoBtn').onclick = function() {
+      auto = !auto; this.textContent = auto?"自动播放：开":"自动播放：关";
+      if(auto) playCurrent(); else window.speechSynthesis.cancel();
+    };
+  </script>
+</body>
+</html>
