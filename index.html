@@ -16,7 +16,8 @@
       --muted:#7a6b7a;
       --shadow: 0 8px 24px rgba(122,107,122,0.12);
     }
-    html,body{height:100%;margin:0;font-family:"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",sans-serif;background:url('https:https://m.gettywallpapers.com/wp-content/uploads/2023/12/Cute-Desktop-Wallpaper.jpg') center/cover no-repeat fixed;color:var(--text)}
+    /* ✅ 修复了背景图片链接多余的 https: */
+    html,body{height:100%;margin:0;font-family:"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",sans-serif;background:url('https://m.gettywallpapers.com/wp-content/uploads/2023/12/Cute-Desktop-Wallpaper.jpg') center/cover no-repeat fixed;color:var(--text)}
     .wrap{min-height:100%;display:flex;align-items:center;justify-content:center;padding:20px;}
     
     /* 核心卡片样式 */
@@ -181,10 +182,10 @@
   </div>
 
   <script>
-    // ⚠️ 替换这里为你新发布的 Web App URL
-    const GAS_URL = "https://script.google.com/macros/s/AKfycbyTZWJz3xEumOHMx-EZhRZzKpZxI94sR2BXyTTaTyk_aSioVIcZRjN1__i7NIobpTiRiw/exec";
+    // ✅ 1. 更新后的 GAS 链接
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbz6Cx8eX2guMerkXB-foaiHWeTn6qVCInPL6_HS6WFVl6Q_NZ2ijNAhMsonOsMBUiod3w/exec";
     
-    // ✅ 课文已更新为“热闹的乐园”
+    // 课文内容：热闹的乐园
     const sentences = [
       "课间休息时，校园像一座乐园。",
       "活泼的同学向操场奔去。",
@@ -299,6 +300,10 @@
       formData.append('name', googleUser.name);
       formData.append('email', googleUser.email);
       formData.append('class', currentClass);
+      
+      // ✅ 2. 必须添加“练习名称”，否则后台不知道写到哪个Tab
+      formData.append('exercise', '课文朗读-热闹的乐园'); 
+
       formData.append('score', "完成");
       formData.append('total', sentences.length);
 
@@ -322,5 +327,4 @@
     };
   </script>
 </body>
-
 </html>
